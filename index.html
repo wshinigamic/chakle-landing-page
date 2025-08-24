@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CHAKLE</title>
+
+  <!-- Favicon (SVG) -->
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+
+  <!-- Preload wallpaper for faster paint -->
+  <link rel="preload" as="image" href="background.jpg" />
+
+  <style>
+    /* ===== Page-level: no scrolling ===== */
+    html, body {
+      height: 100%;
+      margin: 0;
+      overflow: hidden;                 /* 🚫 disable scrollbars */
+    }
+
+    /* ===== Wallpaper background ===== */
+    body {
+      background: #000;                 /* safe fallback while image loads */
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: url("background.jpg") no-repeat center center;
+      background-size: cover;
+      z-index: -1;                      /* behind all content */
+    }
+
+    /* ===== Hero container: fills viewport, anchors overlay + button ===== */
+    .hero {
+      position: relative;
+      height: 100svh;                   /* full viewport height (mobile-safe) */
+      width: 100%;
+      overflow: hidden;                 /* ensure no scroll due to children */
+      display: block;
+      opacity: 0;                       /* fade-in for the whole unit */
+      align-items: center;        /* vertical centering */
+      justify-content: center; 
+      animation: fadeIn 2.2s ease-out 0.1s forwards;
+    }
+
+    /* ===== Overlay image (PNG with transparency) =====
+       - Centered both axes
+       - Scales by HEIGHT to fill hero
+       - Width is auto and may overflow (but stays centered) */
+    .logo-overlay {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      height: 90%;                     /* fill hero height */
+      width: auto;                      /* keep aspect ratio; can overflow width */
+      transform: translate(-50%, -50%); /* center by its own middle */
+      display: block;
+      filter: drop-shadow(0 2px 12px rgba(0,0,0,0.35));
+      pointer-events: none;             /* overlay never blocks clicks */
+    }
+
+    /* ===== Overlapping GrabFood pill (bottom-center over the overlay) ===== */
+    .button {
+      position: absolute;
+      left: 50%;
+      /* bottom: max(24px, calc(env(safe-area-inset-bottom) + 12px)); */
+      bottom: 15%;
+      transform: translateX(-50%);
+      display: inline-flex;             /* center inner img perfectly */
+      align-items: center;
+      justify-content: center;
+
+      background: rgba(255,255,255,0.9);/* soft (not pure white) */
+      border: 1px solid rgba(0,0,0,0.06);
+      border-radius: 999px;             /* pill shape */
+      box-shadow: 0 6px 18px rgba(0,0,0,0.18);
+      padding: 0.35rem 0.7rem;
+      text-decoration: none;
+
+      /* Size constraints: proportional yet safe on tiny/wide screens */
+      width: max-content;
+      max-width: min(60vw, 40%);        /* <= 60% of viewport AND <= ~half image width */
+      overflow: hidden;                 /* guard against inner img overflow */
+      z-index: 2;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .button:hover {
+      transform: translateX(-50%) translateY(-1px);
+      box-shadow: 0 8px 22px rgba(0,0,0,0.22);
+    }
+    .button img {
+      display: block;
+      max-width: 100%;                  /* never overflow the pill */
+      height: auto;
+    }
+
+    /* ===== Tweaks for very narrow phones ===== */
+    @media (max-width: 380px) {
+      .button {
+        padding: 0.38rem 0.75rem;
+        max-width: min(66vw, 52%);
+      }
+    }
+
+    @media (orientation: landscape) {
+      .button {
+        max-width: 35vh;   /* cap relative to viewport height */
+        padding: 0.35rem 0.7rem;
+      }
+    }
+
+    /* ===== Respect reduced motion ===== */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .hero { animation: none; opacity: 1; }
+      .button:hover { transform: translateX(-50%); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HERO: overlay PNG centered; button overlaps bottom center -->
+  <div class="hero" role="group" aria-label="Brand hero">
+    <img src="overlay.png" alt="Chakle Milk Tea" class="logo-overlay" />
+    <a href=""
+       target="_blank" rel="noopener" class="button">
+      <img src="grabfood-badge.png" alt="Available on GrabFood">
+    </a>
+  </div>
+
+</body>
+</html>
